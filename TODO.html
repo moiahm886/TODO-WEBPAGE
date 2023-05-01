@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang = "en">
+<head>
+    <title>To Do App</title>
+    <style>
+        body{
+            background: linear-gradient(to right, #87cefa, #add8e6, #afeeee, #40e0d0);
+            overflow-y:auto;
+            height: 100vh;
+        }
+        h1{
+            color: #333333;
+            text-align: center;
+            font-size: 32px;
+            font-weight: bold;
+        }
+        .plus-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background-color: #2065ad; /* Customize the background color */
+            color: #fff; /* Customize the text color */
+            font-size: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        table{
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th,td{
+            border: 1px solid blueviolet;
+            padding: 8px;
+            text-align: center;
+        }
+        .form-container {
+            display: none;
+            position: absolute;
+            padding: 20px;
+            border: 1px solid #8d2323;
+            overflow-y: auto;
+            justify-content: center;
+            background-color: rgb(79, 143, 238);
+        }
+        .form-container input,
+        .form-container select {
+            display: block;
+            margin-bottom: 10px;
+            width: 100%;
+            padding: 5px;
+        }
+    </style>
+</head>
+<h1>TODO APP</h1>
+<div class="plus-button" id="plus-button" >+</div>
+<table>
+    <tr>
+        <th colspan="5">Task</th>
+        <th colspan="2">Due Date</th>
+        <th colspan="2">Priority</th>
+        <th colspan="1">Delete</th>
+        <th colspan="1">Edit</th>
+        <th colspan="1">Done</th>
+    </tr>
+    <tbody id = "table">
+    </tbody>
+</table>
+<br><br>
+<div class="form-container" id="task-form">
+    <h2 style="text-align:center">Add Task</h2>
+    <label for="task-input">Task Name</label><input type="text" id="task-input" placeholder="Task" required>
+    <label for="due-date-input">Due Date</label><input type="date" id="due-date-input" placeholder="Due Date" required>
+    <label for="priority-select">Priority</label><select id="priority-select">
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+    </select>
+    <button type="submit" onclick="addTask()">Add Task</button>
+    <button type = "submit" id="btnCancel">Cancel</button>
+</div>
+<script>
+    const addButton = document.getElementById("plus-button");
+    const formContainer = document.getElementById("task-form");
+    addButton.addEventListener("click",function(){
+        formContainer.style.display = "block";
+    })
+    const canButton = document.getElementById("btnCancel")
+    canButton.addEventListener("click",function(){
+        document.getElementById("task-input").value = "";
+        document.getElementById("due-date-input").value = "";
+        document.getElementById("priority-select").value = "low";
+        formContainer.style.display="none";
+    })
+    function addTask()
+    {
+
+        let Table = document.getElementById("table")
+        let taskInput = document.getElementById("task-input").value;
+        let dueDateInput = document.getElementById("due-date-input").value;
+        let prioritySelect = document.getElementById("priority-select").value.toUpperCase();
+        if(taskInput.trim()==="" && dueDateInput.trim()==="")
+        {
+            alert("Please fill the required fields")
+        }
+        else {
+            let newRow = document.createElement("tr");
+            let Tasks = document.createElement("td");
+            let DueDate = document.createElement("td");
+            let Priority = document.createElement("td");
+            Tasks.textContent = taskInput;
+            DueDate.textContent = dueDateInput;
+            Priority.textContent = prioritySelect;
+            Tasks.colSpan = 5;
+            DueDate.colSpan = 2;
+            Priority.colSpan = 2;
+            newRow.appendChild(Tasks);
+            newRow.appendChild(DueDate);
+            newRow.appendChild(Priority);
+            let deleteButton = document.createElement("button");
+            deleteButton.textContent = "Delete";
+            let editButton = document.createElement("button");
+            let doneButton = document.createElement("button");
+            doneButton.textContent = "Done"
+            editButton.textContent = "Edit";
+            newRow.appendChild(deleteButton);
+            newRow.appendChild(editButton);
+            Table.appendChild(newRow);
+            if (prioritySelect === "HIGH") {
+                newRow.style.backgroundColor = "#ff0000"
+            } else if (prioritySelect === "MEDIUM") {
+                newRow.style.backgroundColor = "#0000ff"
+            } else {
+                newRow.style.backgroundColor = "#00ff00"
+            }
+            let DeleteCell = document.createElement("td");
+            let EditCell = document.createElement("td");
+            let DoneCell = document.createElement("td");
+            DeleteCell.appendChild(deleteButton);
+            EditCell.appendChild(editButton);
+            DoneCell.appendChild(doneButton);
+            DeleteCell.colSpan=1;
+            EditCell.colSpan=1;
+            DoneCell.colSpan=1;
+            newRow.appendChild(DeleteCell);
+            newRow.appendChild(EditCell);
+            newRow.appendChild(DoneCell);
+            deleteButton.addEventListener("click",deleteTask);
+            doneButton.addEventListener("click",doneTask);
+            editButton.addEventListener("click",editTask);
+            document.getElementById("task-input").value = "";
+            document.getElementById("due-date-input").value = "";
+            document.getElementById("priority-select").value = "low";
+            function doneTask() {
+                let row = this.parentNode.parentNode;
+                row.style.backgroundColor="Brown"
+                doneButton.style.display="none";
+                editButton.style.display="none";
+            }
+
+        }
+
+    }
+    function editTask() {
+        let row = this.parentNode.parentNode;
+        let task = document.createElement("td");
+        task.colSpan = 5;
+        task.textContent = document.getElementById("task-input").value;
+        let date = document.createElement("td");
+        date.colSpan = 2;
+        date.textContent = document.getElementById("due-date-input").value;
+        let prior = document.createElement("td");
+        prior.colSpan = 2;
+        prior.textContent = document.getElementById("priority-select").value.toUpperCase();
+        if(task.textContent===""&&date.textContent==="")
+        {
+            alert("Empty Fields")
+        }
+        else {
+            row.cells[0].textContent = task.textContent;
+            row.cells[1].textContent = date.textContent;
+            row.cells[2].textContent = prior.textContent;
+
+            if (prior.textContent === "HIGH") {
+                row.style.backgroundColor = "#ff0000";
+            } else if (prior.textContent === "MEDIUM") {
+                row.style.backgroundColor = "#0000ff";
+            } else {
+                row.style.backgroundColor = "#00ff00";
+            }
+            document.getElementById("task-input").value = "";
+            document.getElementById("due-date-input").value = "";
+            document.getElementById("priority-select").value = "low";
+        }
+    }
+    function deleteTask() {
+        let row = this.parentNode.parentNode;
+        row.remove();
+    }
+
+</script>
+</html>
